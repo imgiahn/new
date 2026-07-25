@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube 검색</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="header">
+    <h1 class="logo"><span class="play">▶</span> YouTube 검색</h1>
+    <form id="search-form" class="search-form">
+      <input
+        id="search-input"
+        type="text"
+        placeholder="검색어를 입력하세요"
+        autocomplete="off"
+      />
+      <button type="submit">검색</button>
+    </form>
+    <nav class="auth-nav">
+      {% if username %}
+        <span class="auth-user">{{ username }}님</span>
+        <a href="{{ url_for('logout') }}">로그아웃</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">로그인</a>
+        <a href="{{ url_for('signup') }}" class="signup-btn">회원가입</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main>
+    <p id="status" class="status"></p>
+    <section id="results" class="results"></section>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
