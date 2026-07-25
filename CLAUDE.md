@@ -21,6 +21,30 @@ python -c "import app; c=app.app.test_client(); print(c.get('/api/search?q=lofi'
 
 주의: Windows 콘솔(cp949)은 영상 제목의 이모지/한글을 출력하지 못함 — 결과를 출력할 때 stdout을 UTF-8로 재설정할 것 (`sys.stdout.reconfigure(encoding='utf-8')`).
 
+## 데이터베이스 / 인증
+
+로그인/회원가입은 EC2(13.61.144.167)의 `kudal-postgres` 컨테이너 안 **`ytsearch` DB**를 사용함
+(자세한 셋업은 `db/README.md`). 앱은 `.env`의 `DATABASE_URL`로 접속하며, `db.py`가 커넥션을
+제공. 비밀번호는 werkzeug 해시로 저장하고 로그인 상태는 Flask 세션 쿠키로 관리. 스키마 변경은
+`db/schema.sql`에 반영한 뒤 서버 컨테이너에 적용할 것.
+
+## 배포 워크플로 (기능 단위 완료 시 필수)
+
+**기능 하나를 완성할 때마다** 아래를 수행한다. 서버는 이 리포를 pull 기반으로 배포함.
+
+1. 로컬에서 기능 단위 작업 완료 → 스모크 테스트
+2. `git add -A && git commit && git push origin main`
+3. 서버에서 pull 후 Docker 재빌드/재시작:
+   ```bash
+   ssh -i giahn.pem ec2-user@13.61.144.167 'cd ~/new && git pull && sudo docker compose up -d --build'
+   ```
+
+배포 구조: 서버의 `~/new`가 이 리포의 클론. `docker-compose.yml`이 `Dockerfile`로 이미지를 빌드해
+`ytsearch-web` 컨테이너(외부 8000 → 내부 gunicorn 5000)로 띄우며, 기존 `kudal_kudal-net`
+네트워크에 붙어 `kudal-postgres:5432`로 DB에 접근함. 서버의 `.env`는 리포에 없으므로(gitignore)
+최초 1회 수동 생성해야 하고, 그 `DATABASE_URL` 호스트는 `13.61.144.167`이 아니라 컨테이너명
+**`kudal-postgres`** 여야 함(같은 도커 네트워크 기준).
+
 ## 아키텍처
 
 검색은 YouTube Data API를 **사용하지 않음**. `app.py`의 `/api/search`가 브라우저처럼 위장한 User-Agent로 `https://www.youtube.com/results?search_query=...` 를 요청한 뒤:

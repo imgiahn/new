@@ -1,0 +1,16 @@
+# 서버 배포용. kudal-postgres가 있는 기존 네트워크에 붙어 DB에 접근한다.
+services:
+  web:
+    build: .
+    container_name: ytsearch-web
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8000:5000"   # 외부 8000 -> 컨테이너 5000
+    networks:
+      - kudal-net
+
+networks:
+  kudal-net:
+    external: true
+    name: kudal_kudal-net
