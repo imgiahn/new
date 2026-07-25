@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     env_file: .env
     ports:
-      - "8000:5000"   # 외부 8000 -> 컨테이너 5000
+      - "8080:5000"   # 외부 8080 -> 컨테이너 5000 (8000은 kudal-api가 사용 중)
     networks:
       - kudal-net
 
