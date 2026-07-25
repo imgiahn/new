@@ -183,6 +183,39 @@ main {
   text-decoration: none;
 }
 
+.recommend {
+  margin-bottom: 8px;
+}
+
+.recommend-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #aaa;
+  margin-bottom: 12px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  background: #272727;
+  color: #f1f1f1;
+  border: 1px solid #303030;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.chip:hover {
+  background: #3f3f3f;
+  border-color: #3ea6ff;
+}
+
 .status {
   color: #aaa;
   text-align: center;

@@ -100,10 +100,32 @@ def logout():
     return redirect(url_for("index"))
 
 
+# 검색 전에 보여줄 AI 관련 추천 키워드
+RECOMMENDED_KEYWORDS = [
+    "ChatGPT 활용법",
+    "생성형 AI",
+    "프롬프트 엔지니어링",
+    "LLM 원리",
+    "머신러닝 입문",
+    "딥러닝 강의",
+    "AI 그림 그리기",
+    "스테이블 디퓨전",
+    "AI 코딩 도구",
+    "AI 에이전트",
+    "파이썬 머신러닝",
+    "AI 최신 뉴스",
+]
+
+
 # ─────────────────────────── YouTube 검색 ───────────────────────────
 @app.route("/")
 def index():
     return render_template("index.html", username=session.get("username"))
+
+
+@app.route("/api/recommendations")
+def recommendations():
+    return jsonify({"keywords": RECOMMENDED_KEYWORDS})
 
 
 @app.route("/api/search")

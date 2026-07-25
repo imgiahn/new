@@ -2,10 +2,37 @@ const form = document.getElementById("search-form");
 const input = document.getElementById("search-input");
 const statusEl = document.getElementById("status");
 const resultsEl = document.getElementById("results");
+const recommendEl = document.getElementById("recommend");
+const chipsEl = document.getElementById("recommend-chips");
 
-form.addEventListener("submit", async (e) => {
+// 추천 키워드 로드 → 칩 렌더링
+loadRecommendations();
+
+async function loadRecommendations() {
+  try {
+    const resp = await fetch("/api/recommendations");
+    const data = await resp.json();
+    chipsEl.innerHTML = data.keywords
+      .map((k) => `<button type="button" class="chip">${escapeHtml(k)}</button>`)
+      .join("");
+    chipsEl.querySelectorAll(".chip").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        input.value = btn.textContent;
+        runSearch(btn.textContent);
+      });
+    });
+  } catch (err) {
+    recommendEl.style.display = "none";
+  }
+}
+
+form.addEventListener("submit", (e) => {
   e.preventDefault();
-  const query = input.value.trim();
+  runSearch(input.value.trim());
+});
+
+async function runSearch(query) {
+  query = (query || "").trim();
   if (!query) return;
 
   statusEl.textContent = "검색 중...";
@@ -30,7 +57,7 @@ form.addEventListener("submit", async (e) => {
   } catch (err) {
     statusEl.textContent = "네트워크 오류가 발생했습니다.";
   }
-});
+}
 
 function render(results) {
   resultsEl.innerHTML = results
